@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Submit Your Directory</h1>
+
+  <form action="/submit" method="POST">
+    <input name="name" placeholder="Name" required>
+    <input name="url" placeholder="URL" required>
+    <textarea name="description" placeholder="Description"></textarea>
+
+    <select name="category_id">
+      {{ range .Categories }}
+        <option value="{{ .ID }}">{{ .Name }}</option>
+      {{ end }}
+    </select>
+
+    <input name="tags" placeholder="Tags (comma-separated)">
+    <input name="pricing_model" placeholder="Pricing Model">
+    <input name="price_start" placeholder="Starting Price">
+
+    <label><input type="checkbox" name="has_newsletter"> Has Newsletter</label>
+    <label><input type="checkbox" name="has_blog"> Has Blog</label>
+
+    <label>Alternatives:</label>
+    {{ range .Alternatives }}
+      <label><input type="checkbox" name="alternatives" value="{{ .ID }}"> {{ .Name }}</label>
+    {{ end }}
+
+    <!-- Placeholder for file upload UI -->
+    <p>(Image uploads coming next step)</p>
+
+    <button type="submit">Submit and Pay</button>
+  </form>
+
+  <p>{{ .Error }}</p>
+</body>
+</html>

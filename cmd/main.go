@@ -27,6 +27,7 @@ func main() {
 
 	routes.AuthRoutes(r)
 	routes.AdminRoutes(r)
+	routes.SubmitRoutes(r)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "home/index.html", gin.H{})
