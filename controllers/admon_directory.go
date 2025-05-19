@@ -12,7 +12,7 @@ func AdminListDirectories(c *gin.Context) {
 	var dirs []models.Directory
 	config.DB.Preload("Category").Preload("User").Find(&dirs)
 
-	c.HTML(http.StatusOK, "admin/directories.html", gin.H{
+	c.HTML(http.StatusOK, "admin-directories.html", gin.H{
 		"Directories": dirs,
 	})
 }
