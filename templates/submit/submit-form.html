@@ -1,65 +1,130 @@
 <!DOCTYPE html>
-<html>
-<body>
-  <h1>Submit Your Directory</h1>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Submit Directory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <form action="/submit" method="POST">
-    <input name="name" placeholder="Name" required>
-    <input name="url" placeholder="URL" required>
-    <textarea name="description" placeholder="Description"></textarea>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-white text-gray-900 font-sans">
 
-    <select name="category_id">
-      {{ range .Categories }}
-        <option value="{{ .ID }}">{{ .Name }}</option>
-      {{ end }}
-    </select>
+  <div class="max-w-2xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-6">Submit Your Directory</h1>
 
-    <input name="tags" placeholder="Tags (comma-separated)">
-    <input name="pricing_model" placeholder="Pricing Model">
-    <input name="price_start" placeholder="Starting Price">
+    {{ if .Error }}
+      <div class="bg-red-100 text-red-800 px-4 py-3 rounded-xl mb-4 text-sm">
+        {{ .Error }}
+      </div>
+    {{ end }}
 
-    <label><input type="checkbox" name="has_newsletter"> Has Newsletter</label>
-    <label><input type="checkbox" name="has_blog"> Has Blog</label>
+    <form action="/submit" method="POST" class="space-y-6">
 
-    <input type="file" id="logo-upload">
-    <input type="hidden" name="logo_url" id="logo-url">
-    <button onclick="uploadLogo()">Upload Logo</button>
+      <div>
+        <label class="block mb-1 text-sm font-medium">Name</label>
+        <input name="name" type="text" required
+               class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black" />
+      </div>
 
-    <script>
-    async function uploadLogo() {
+      <div>
+        <label class="block mb-1 text-sm font-medium">URL</label>
+        <input name="url" type="url" required
+               class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black" />
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-medium">Description</label>
+        <textarea name="description" rows="4"
+                  class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black"></textarea>
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-medium">Category</label>
+        <select name="category_id" class="w-full px-3 py-2 border rounded-xl text-sm">
+          {{ range .Categories }}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+          {{ end }}
+        </select>
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-medium">Tags <span class="text-gray-500">(comma-separated)</span></label>
+        <input name="tags" type="text"
+               class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-1 text-sm font-medium">Pricing Model</label>
+          <input name="pricing_model" type="text"
+                 class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black" />
+        </div>
+        <div>
+          <label class="block mb-1 text-sm font-medium">Starting Price ($)</label>
+          <input name="price_start" type="number" step="0.01"
+                 class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-black" />
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4 text-sm">
+        <label><input type="checkbox" name="has_newsletter" class="mr-1"> Has Newsletter</label>
+        <label><input type="checkbox" name="has_blog" class="mr-1"> Has Blog</label>
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-medium">Upload Logo</label>
+        <input type="file" id="logo-upload" class="mb-2">
+        <input type="hidden" name="logo_url" id="logo-url">
+        <button type="button" onclick="uploadLogo()"
+                class="text-sm px-4 py-2 bg-gray-100 rounded-xl border hover:bg-gray-200">
+          Upload Logo
+        </button>
+      </div>
+
+      <script>
+      async function uploadLogo() {
         const fileInput = document.getElementById("logo-upload");
         const file = fileInput.files[0];
-        if (!file) return;
+        if (!file) return alert("Choose a file first.");
 
         const res = await fetch(`/api/upload-url?filename=logos/${file.name}`);
         const { upload_url } = await res.json();
 
         await fetch(upload_url, {
-        method: "PUT",
-        headers: {
-            "Content-Type": file.type
-        },
-        body: file
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file
         });
 
-        // Save the public URL
         document.getElementById("logo-url").value = upload_url.split("?")[0];
         alert("Logo uploaded!");
-    }
-    </script>
+      }
+      </script>
 
+      <div>
+        <label class="block mb-2 text-sm font-medium">Select Alternatives</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto border p-3 rounded-xl">
+          {{ range .Alternatives }}
+            <label class="flex items-center text-sm">
+              <input type="checkbox" name="alternatives" value="{{ .ID }}" class="mr-2">
+              {{ .Name }}
+            </label>
+          {{ end }}
+        </div>
+      </div>
 
-    <label>Alternatives:</label>
-    {{ range .Alternatives }}
-      <label><input type="checkbox" name="alternatives" value="{{ .ID }}"> {{ .Name }}</label>
-    {{ end }}
+      <div>
+        <button type="submit"
+                class="w-full py-3 px-4 bg-black text-white rounded-xl hover:bg-gray-900 text-sm font-medium">
+          Submit & Pay
+        </button>
+      </div>
 
-    <!-- Placeholder for file upload UI -->
-    <p>(Image uploads coming next step)</p>
+    </form>
+  </div>
 
-    <button type="submit">Submit and Pay</button>
-  </form>
-
-  <p>{{ .Error }}</p>
 </body>
 </html>
