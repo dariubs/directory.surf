@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Your Submitted Directories</h1>
+
+  {{ if not .Directories }}
+    <p>No submissions yet.</p>
+  {{ else }}
+    <table border="1">
+      <tr><th>Name</th><th>Category</th><th>Approved</th><th>Featured</th></tr>
+      {{ range .Directories }}
+        <tr>
+          <td>{{ .Name }}</td>
+          <td>{{ .Category.Name }}</td>
+          <td>{{ if .IsApproved }}✅{{ else }}⏳{{ end }}</td>
+          <td>{{ if .IsFeatured }}⭐ {{ .FeaturedOn }}{{ end }}</td>
+        </tr>
+      {{ end }}
+    </table>
+  {{ end }}
+</body>
+</html>
