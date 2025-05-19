@@ -7,4 +7,6 @@ import (
 
 func PublicRoutes(r *gin.Engine) {
 	r.GET("/", controllers.PublicDirectoryIndex)
+	r.GET("/sitemap.xml", controllers.Sitemap)
+	r.StaticFile("/robots.txt", "./static/robots.txt")
 }

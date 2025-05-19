@@ -49,5 +49,9 @@ func PublicDirectoryIndex(c *gin.Context) {
 		"CurrentCategory": categorySlug,
 		"CurrentTag":      tagFilter,
 		"SearchQuery":     search,
+
+		"Title":       "Directory Surf — Discover the Best Startup Directories",
+		"Description": "A curated directory of web directories for startups, SaaS, AI, and more.",
+		"Canonical":   "https://directory.surf/",
 	})
 }
