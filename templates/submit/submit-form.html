@@ -21,6 +21,34 @@
     <label><input type="checkbox" name="has_newsletter"> Has Newsletter</label>
     <label><input type="checkbox" name="has_blog"> Has Blog</label>
 
+    <input type="file" id="logo-upload">
+    <input type="hidden" name="logo_url" id="logo-url">
+    <button onclick="uploadLogo()">Upload Logo</button>
+
+    <script>
+    async function uploadLogo() {
+        const fileInput = document.getElementById("logo-upload");
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const res = await fetch(`/api/upload-url?filename=logos/${file.name}`);
+        const { upload_url } = await res.json();
+
+        await fetch(upload_url, {
+        method: "PUT",
+        headers: {
+            "Content-Type": file.type
+        },
+        body: file
+        });
+
+        // Save the public URL
+        document.getElementById("logo-url").value = upload_url.split("?")[0];
+        alert("Logo uploaded!");
+    }
+    </script>
+
+
     <label>Alternatives:</label>
     {{ range .Alternatives }}
       <label><input type="checkbox" name="alternatives" value="{{ .ID }}"> {{ .Name }}</label>
