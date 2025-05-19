@@ -22,8 +22,9 @@ func ShowSubmitForm(c *gin.Context) {
 	config.DB.Find(&directories)
 
 	c.HTML(http.StatusOK, "submit-form.html", gin.H{
-		"Categories":   categories,
-		"Alternatives": directories,
+		"Categories":       categories,
+		"Alternatives":     directories,
+		"TurnstileSiteKey": os.Getenv("TURNSTILE_SITE_KEY"),
 	})
 }
 
