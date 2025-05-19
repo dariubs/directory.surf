@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Directory Surf</h1>
+
+  <form method="GET" action="/">
+    <input name="q" placeholder="Search..." value="{{ .SearchQuery }}">
+    <button type="submit">Search</button>
+  </form>
+
+  <h2>Categories</h2>
+  <ul>
+    {{ range .Categories }}
+      <li><a href="/?category={{ .Slug }}">{{ .Name }}</a></li>
+    {{ end }}
+  </ul>
+
+  <h2>Tags</h2>
+  <ul>
+    {{ range .Tags }}
+      <li><a href="/?tag={{ .Name }}">{{ .Name }}</a></li>
+    {{ end }}
+  </ul>
+
+  <h2>Directories</h2>
+  {{ if not .Directories }}
+    <p>No results.</p>
+  {{ else }}
+    <ul>
+    {{ range .Directories }}
+      <li>
+        <strong>{{ .Name }}</strong> — {{ .Description }}
+        {{ if .IsFeatured }}<span>⭐</span>{{ end }}
+        <br><small>Category: {{ .Category.Name }}</small>
+        <br><small>Tags:
+          {{ range .Tags }}<span>{{ .Name }}</span> {{ end }}
+        </small>
+      </li>
+    {{ end }}
+    </ul>
+  {{ end }}
+</body>
+</html>

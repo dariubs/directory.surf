@@ -34,6 +34,7 @@ func main() {
 	routes.PaymentRoutes(r)
 	routes.UploadRoutes(r)
 	routes.DashboardRoutes(r)
+	routes.PublicRoutes(r)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "home/index.html", gin.H{})
