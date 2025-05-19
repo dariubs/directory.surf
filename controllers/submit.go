@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/directorysurf/directory.surf/config"
+	"github.com/directorysurf/directory.surf/helper"
 	"github.com/directorysurf/directory.surf/models"
 	"github.com/directorysurf/directory.surf/services"
 	"github.com/gin-contrib/sessions"
@@ -34,6 +35,17 @@ func SubmitDirectory(c *gin.Context) {
 
 	if userID == nil {
 		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	token := c.PostForm("cf-turnstile-response")
+	if token == "" {
+		c.String(http.StatusBadRequest, "Captcha missing")
+		return
+	}
+
+	if !helper.VerifyTurnstile(token, c.ClientIP()) {
+		c.String(http.StatusBadRequest, "Captcha failed")
 		return
 	}
 
