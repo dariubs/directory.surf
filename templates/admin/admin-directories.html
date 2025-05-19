@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>All Directory Submissions</h1>
+
+  <table border="1">
+    <tr>
+      <th>ID</th><th>Name</th><th>Category</th><th>Approved</th><th>Featured</th><th>Actions</th>
+    </tr>
+    {{ range .Directories }}
+    <tr>
+      <td>{{ .ID }}</td>
+      <td>{{ .Name }}</td>
+      <td>{{ .Category.Name }}</td>
+      <td>{{ .IsApproved }}</td>
+      <td>{{ .FeaturedOn }}</td>
+      <td>
+        {{ if not .IsApproved }}
+          <a href="/admin/directories/{{ .ID }}/approve">Approve</a>
+        {{ end }}
+        <a href="/admin/directories/{{ .ID }}/feature?area=homepage">Feature Home</a> |
+        <a href="/admin/directories/{{ .ID }}/feature?area=category">Feature Cat</a> |
+        <a href="/admin/directories/{{ .ID }}/delete">Delete</a>
+      </td>
+    </tr>
+    {{ end }}
+  </table>
+</body>
+</html>

@@ -12,5 +12,10 @@ func AdminRoutes(r *gin.Engine) {
 
 	admin.GET("/dashboard", controllers.AdminDashboard)
 
+	admin.GET("/directories", controllers.AdminListDirectories)
+	admin.GET("/directories/:id/approve", controllers.AdminApproveDirectory)
+	admin.GET("/directories/:id/feature", controllers.AdminFeatureDirectory)
+	admin.GET("/directories/:id/delete", controllers.AdminDeleteDirectory)
 	// Add future admin routes here
+
 }
