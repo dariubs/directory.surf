@@ -8,6 +8,7 @@ import (
 	"github.com/directorysurf/directory.surf/models"
 	"github.com/directorysurf/directory.surf/routes"
 	"github.com/directorysurf/directory.surf/seed"
+	"github.com/directorysurf/directory.surf/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,7 @@ func main() {
 	config.LoadEnv()
 	db := config.InitDB()
 	models.AutoMigrate(db)
+	services.InitStripe()
 
 	if os.Getenv("SEED") == "true" {
 		seed.Run()
@@ -28,6 +30,7 @@ func main() {
 	routes.AuthRoutes(r)
 	routes.AdminRoutes(r)
 	routes.SubmitRoutes(r)
+	routes.PaymentRoutes(r)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "home/index.html", gin.H{})
