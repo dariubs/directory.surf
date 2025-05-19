@@ -5,6 +5,7 @@ import (
 
 	"github.com/directorysurf/directory.surf/config"
 	"github.com/directorysurf/directory.surf/models"
+	"github.com/directorysurf/directory.surf/services"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -27,6 +28,11 @@ func Signup(c *gin.Context) {
 		c.HTML(http.StatusBadRequest, "signup.html", gin.H{"Error": "Email already exists"})
 		return
 	}
+
+	go services.SendEmail(email, "Welcome to Directory Surf", `
+		<p>Thanks for signing up! You can now submit your directory here:</p>
+		<p><a href="https://directory.surf/submit">Submit a Directory</a></p>
+	`)
 
 	c.Redirect(http.StatusFound, "/login")
 }

@@ -18,6 +18,7 @@ func main() {
 	models.AutoMigrate(db)
 	services.InitStripe()
 	services.InitR2()
+	services.InitEmail()
 
 	if os.Getenv("SEED") == "true" {
 		seed.Run()

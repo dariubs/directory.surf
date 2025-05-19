@@ -3,11 +3,13 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/directorysurf/directory.surf/config"
 	"github.com/directorysurf/directory.surf/models"
+	"github.com/directorysurf/directory.surf/services"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -95,6 +97,24 @@ func SubmitDirectory(c *gin.Context) {
 			config.DB.Model(&directory).Association("Alternates").Append(&alt)
 		}
 	}
+
+	var user models.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		// fallback: don't send email if user not found
+		fmt.Println("Error loading user:", err)
+		return
+	}
+
+	go services.SendEmail(user.Email, "Submission Received", fmt.Sprintf(`
+  <p>Your submission "<strong>%s</strong>" has been received and is pending review.</p>
+  <p>Once approved, it will appear on the site.</p>
+`, directory.Name))
+
+	// Notify admin
+	go services.SendEmail(os.Getenv("ADMIN_EMAIL"), "New Directory Submission", fmt.Sprintf(`
+  <p><strong>%s</strong> was just submitted by %s</p>
+  <p><a href="https://directory.surf/admin/directories">Review in Admin Panel</a></p>
+`, directory.Name, user.Email))
 
 	// Redirect to payment (next step)
 	c.Redirect(http.StatusFound, "/pay/"+directory.Slug)
