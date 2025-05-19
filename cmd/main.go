@@ -5,7 +5,6 @@ import (
 
 	"github.com/directorysurf/directory.surf/config"
 	"github.com/directorysurf/directory.surf/middleware"
-	"github.com/directorysurf/directory.surf/models"
 	"github.com/directorysurf/directory.surf/routes"
 	"github.com/directorysurf/directory.surf/seed"
 	"github.com/directorysurf/directory.surf/services"
@@ -14,8 +13,7 @@ import (
 
 func main() {
 	config.LoadEnv()
-	db := config.InitDB()
-	models.AutoMigrate(db)
+	config.InitDB()
 	services.InitStripe()
 	services.InitR2()
 	services.InitEmail()
@@ -36,10 +34,6 @@ func main() {
 	routes.UploadRoutes(r)
 	routes.DashboardRoutes(r)
 	routes.PublicRoutes(r)
-
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "home/index.html", gin.H{})
-	})
 
 	r.Run(":8080")
 }

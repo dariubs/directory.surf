@@ -42,7 +42,7 @@ func PublicDirectoryIndex(c *gin.Context) {
 	config.DB.Find(&categories)
 	config.DB.Find(&tags)
 
-	c.HTML(http.StatusOK, "public/index.html", gin.H{
+	c.HTML(http.StatusOK, "index.html", gin.H{
 		"Directories":     directories,
 		"Categories":      categories,
 		"Tags":            tags,
