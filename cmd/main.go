@@ -17,6 +17,7 @@ func main() {
 	db := config.InitDB()
 	models.AutoMigrate(db)
 	services.InitStripe()
+	services.InitR2()
 
 	if os.Getenv("SEED") == "true" {
 		seed.Run()
@@ -31,6 +32,7 @@ func main() {
 	routes.AdminRoutes(r)
 	routes.SubmitRoutes(r)
 	routes.PaymentRoutes(r)
+	routes.UploadRoutes(r)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "home/index.html", gin.H{})
