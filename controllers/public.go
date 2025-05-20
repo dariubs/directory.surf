@@ -55,3 +55,26 @@ func PublicDirectoryIndex(c *gin.Context) {
 		"Canonical":   "https://directory.surf/",
 	})
 }
+
+func PublicDirectoryDetail(c *gin.Context) {
+	slug := c.Param("slug")
+
+	var dir models.Directory
+	err := config.DB.Preload("Category").
+		Preload("Tags").
+		Preload("Alternates").
+		Where("slug = ? AND is_approved = ?", slug, true).
+		First(&dir).Error
+
+	if err != nil {
+		c.String(http.StatusNotFound, "Directory not found")
+		return
+	}
+
+	c.HTML(http.StatusOK, "detail.html", gin.H{
+		"Directory":   dir,
+		"Title":       dir.Name + " | Directory Surf",
+		"Description": dir.Description,
+		"Canonical":   "https://directory.surf/directory/" + dir.Slug,
+	})
+}

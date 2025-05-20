@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -35,4 +36,16 @@ type Directory struct {
 	FeaturedOn string // "homepage", "category", etc.
 
 	SubmittedAt time.Time
+}
+
+func (d *Directory) BeforeCreate(tx *gorm.DB) (err error) {
+	d.Slug = slugify(d.Name)
+	return
+}
+
+func slugify(s string) string {
+	s = strings.ToLower(s)
+	s = strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, " ", "-")
+	return s
 }

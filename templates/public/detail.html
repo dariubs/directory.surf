@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ .Title }}</title>
+  <meta name="description" content="{{ .Description }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <div class="max-w-3xl mx-auto px-4 py-10">
+
+    <a href="/" class="text-sm text-blue-600 hover:underline">&larr; Back to directories</a>
+
+    <div class="mt-6">
+      <h1 class="text-3xl font-bold">{{ .Directory.Name }}</h1>
+      {{ if .Directory.IsFeatured }}
+        <div class="text-yellow-500 text-sm mt-1">⭐ Featured</div>
+      {{ end }}
+    </div>
+
+    <p class="text-gray-700 mt-4">{{ .Directory.Description }}</p>
+
+    <div class="mt-6 space-y-2 text-sm text-gray-600">
+      <div><strong>Category:</strong> {{ .Directory.Category.Name }}</div>
+      <div><strong>Pricing:</strong> {{ .Directory.PricingModel }} (from ${{ printf "%.2f" .Directory.PriceStart }})</div>
+      <div><strong>Newsletter:</strong> {{ if .Directory.HasNewsletter }}✅{{ else }}❌{{ end }}</div>
+      <div><strong>Blog:</strong> {{ if .Directory.HasBlog }}✅{{ else }}❌{{ end }}</div>
+    </div>
+
+    <div class="mt-4">
+      <a href="{{ .Directory.URL }}" target="_blank"
+         class="inline-block mt-2 text-blue-600 underline">Visit Website →</a>
+    </div>
+
+    {{ if .Directory.Tags }}
+      <div class="mt-6">
+        <h2 class="text-lg font-medium mb-2">Tags</h2>
+        <div class="flex flex-wrap gap-2">
+          {{ range .Directory.Tags }}
+            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">{{ .Name }}</span>
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
+
+    {{ if .Directory.Alternates }}
+      <div class="mt-8">
+        <h2 class="text-lg font-medium mb-2">Alternatives</h2>
+        <ul class="list-disc ml-6 text-sm text-blue-700">
+          {{ range .Directory.Alternates }}
+            <li><a href="/directory/{{ .Slug }}" class="hover:underline">{{ .Name }}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+    {{ end }}
+
+  </div>
+</body>
+</html>

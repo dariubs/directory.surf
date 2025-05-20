@@ -61,30 +61,32 @@
 
     <!-- Directory Grid -->
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {{ range .Directories }}
-      <div x-show="tab === 'all' || (tab === 'featured' && {{ .IsFeatured }})"
-           x-transition
-           class="border border-gray-200 rounded-2xl shadow p-5 flex flex-col justify-between hover:shadow-md transition">
-        <div>
-          <div class="flex justify-between items-start mb-2">
-            <h2 class="text-lg font-semibold">{{ .Name }}</h2>
-            {{ if .IsFeatured }}<span class="text-yellow-500 text-xs">⭐ Featured</span>{{ end }}
+        {{ range .Directories }}
+        <a href="/directory/{{ .Slug }}" class="block border border-gray-200 rounded-2xl shadow hover:shadow-md transition p-5">
+          <div class="flex items-center gap-3 mb-3">
+            {{ if .LogoURL }}
+              <img src="{{ .LogoURL }}" alt="{{ .Name }} Logo" class="w-10 h-10 rounded-xl object-cover" />
+            {{ else }}
+              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-xs text-gray-400">No Logo</div>
+            {{ end }}
+            <div class="flex-1">
+              <h2 class="text-lg font-semibold">{{ .Name }}</h2>
+              {{ if .IsFeatured }}<span class="text-yellow-500 text-xs">⭐ Featured</span>{{ end }}
+            </div>
           </div>
           <p class="text-sm text-gray-600 line-clamp-3">{{ .Description }}</p>
-        </div>
-        <div class="mt-4 text-xs text-gray-500">
-          Category: {{ .Category.Name }}
-        </div>
-        <div class="mt-2 flex flex-wrap gap-1">
-          {{ range .Tags }}
-            <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-xs">{{ .Name }}</span>
-          {{ end }}
-        </div>
-        <a href="{{ .URL }}" target="_blank"
-           class="mt-4 inline-block text-blue-600 text-sm hover:underline">Visit →</a>
+          <div class="mt-2 text-xs text-gray-500">
+            Category: {{ .Category.Name }}
+          </div>
+          <div class="mt-1 flex flex-wrap gap-1 text-xs">
+            {{ range .Tags }}
+              <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">{{ .Name }}</span>
+            {{ end }}
+          </div>
+        </a>
+        {{ end }}
       </div>
-      {{ end }}
-    </div>
+      
 
     <!-- No Results -->
     {{ if not .Directories }}
