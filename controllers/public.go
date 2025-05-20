@@ -13,6 +13,8 @@ func PublicDirectoryIndex(c *gin.Context) {
 	categorySlug := c.Query("category")
 	tagFilter := c.Query("tag")
 	search := c.Query("q")
+	hasNewsletter := c.Query("has_newsletter") == "on"
+	hasBlog := c.Query("has_blog") == "on"
 
 	var directories []models.Directory
 	query := config.DB.Preload("Category").Preload("Tags").
@@ -35,6 +37,14 @@ func PublicDirectoryIndex(c *gin.Context) {
 			Where("tags.name = ?", tagFilter)
 	}
 
+	if hasNewsletter {
+		query = query.Where("has_newsletter = ?", true)
+	}
+
+	if hasBlog {
+		query = query.Where("has_blog = ?", true)
+	}
+
 	query.Order("is_featured DESC, created_at DESC").Find(&directories)
 
 	var categories []models.Category
@@ -49,10 +59,8 @@ func PublicDirectoryIndex(c *gin.Context) {
 		"CurrentCategory": categorySlug,
 		"CurrentTag":      tagFilter,
 		"SearchQuery":     search,
-
-		"Title":       "Directory Surf — Discover the Best Startup Directories",
-		"Description": "A curated directory of web directories for startups, SaaS, AI, and more.",
-		"Canonical":   "https://directory.surf/",
+		"HasNewsletter":   hasNewsletter,
+		"HasBlog":         hasBlog,
 	})
 }
 

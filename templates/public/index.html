@@ -43,6 +43,17 @@
           {{ end }}
         </select>
 
+        <label class="flex items-center space-x-2 text-sm">
+            <input type="checkbox" name="has_newsletter" {{ if .HasNewsletter }}checked{{ end }}>
+            <span>Newsletter?</span>
+        </label>
+        
+        <label class="flex items-center space-x-2 text-sm">
+        <input type="checkbox" name="has_blog" {{ if .HasBlog }}checked{{ end }}>
+        <span>Blog?</span>
+        </label>
+        
+
         <button class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm" type="submit">
           Search
         </button>
