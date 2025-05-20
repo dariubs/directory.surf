@@ -35,5 +35,5 @@ func main() {
 	routes.DashboardRoutes(r)
 	routes.PublicRoutes(r)
 
-	r.Run(":8080")
+	r.Run(":2082")
 }
