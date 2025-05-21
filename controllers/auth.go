@@ -18,10 +18,16 @@ func ShowSignup(c *gin.Context) {
 func Signup(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
+	name := c.PostForm("name")
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
-	user := models.User{Email: email, Password: string(hashedPassword)}
+	user := models.User{
+		Name:     name,
+		Email:    email,
+		Password: string(hashedPassword),
+	}
+
 	result := config.DB.Create(&user)
 
 	if result.Error != nil {

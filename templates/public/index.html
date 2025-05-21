@@ -1,109 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>{{ .Title }}</title>
   <meta name="description" content="{{ .Description }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Tailwind CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js -->
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-white text-gray-900 font-sans">
+<body class="bg-[#0f0f0f] text-white font-sans">
 
-  <div class="max-w-7xl mx-auto px-4 py-6">
+    <header x-data="{ menuOpen: false, browseOpen: false }"
+        class="sticky top-0 z-50 bg-[#0f0f0f] border-b border-[#2a2a2a]">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold tracking-tight">Directory Surf</h1>
-      <a href="/submit" class="px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800 text-sm font-medium">
-        Submit Directory
-      </a>
-    </header>
+    <!-- Logo -->
+    <a href="/" class="text-white font-medium text-base tracking-tight">Directory Surf</a>
 
-    <!-- Filters -->
-    <form method="GET" class="mb-8">
-      <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
-        <input name="q" type="text" placeholder="Search directories..." value="{{ .SearchQuery }}"
-               class="w-full md:w-1/3 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black" />
-
-        <select name="category" class="w-full md:w-auto px-3 py-2 border rounded-xl text-sm">
-          <option value="">All Categories</option>
-          {{ range .Categories }}
-            <option value="{{ .Slug }}" {{ if eq .Slug $.CurrentCategory }}selected{{ end }}>{{ .Name }}</option>
-          {{ end }}
-        </select>
-
-        <select name="tag" class="w-full md:w-auto px-3 py-2 border rounded-xl text-sm">
-          <option value="">All Tags</option>
-          {{ range .Tags }}
-            <option value="{{ .Name }}" {{ if eq .Name $.CurrentTag }}selected{{ end }}>{{ .Name }}</option>
-          {{ end }}
-        </select>
-
-        <label class="flex items-center space-x-2 text-sm">
-            <input type="checkbox" name="has_newsletter" {{ if .HasNewsletter }}checked{{ end }}>
-            <span>Newsletter?</span>
-        </label>
-        
-        <label class="flex items-center space-x-2 text-sm">
-        <input type="checkbox" name="has_blog" {{ if .HasBlog }}checked{{ end }}>
-        <span>Blog?</span>
-        </label>
-        
-
-        <button class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm" type="submit">
-          Search
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex items-center space-x-5 text-sm text-gray-300">
+      <div class="relative" @mouseenter="browseOpen = true" @mouseleave="browseOpen = false">
+        <button class="hover:text-white flex items-center gap-1">
+          Browse
+          <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M5.5 7l4.5 4.5L14.5 7z"/></svg>
         </button>
-      </div>
-    </form>
 
-    <!-- Tabs (Example) -->
-    <div x-data="{ tab: 'all' }" class="mb-6">
-      <div class="flex gap-2">
-        <button @click="tab = 'all'" :class="tab === 'all' ? 'bg-black text-white' : 'bg-gray-100 text-black'"
-                class="px-4 py-1 rounded-xl text-sm font-medium">All</button>
-        <button @click="tab = 'featured'" :class="tab === 'featured' ? 'bg-black text-white' : 'bg-gray-100 text-black'"
-                class="px-4 py-1 rounded-xl text-sm font-medium">Featured</button>
+        <!-- Dropdown -->
+        <div x-show="browseOpen" x-transition
+             class="absolute left-0 mt-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-2 w-48 shadow-lg z-50">
+          <a href="/latest" class="block px-2 py-1 text-xs hover:bg-[#2a2a2a] rounded">Latest</a>
+          <a href="/self-hosted" class="block px-2 py-1 text-xs hover:bg-[#2a2a2a] rounded">Self-hosted</a>
+          <a href="/coming-soon" class="block px-2 py-1 text-xs hover:bg-[#2a2a2a] rounded">Coming Soon</a>
+          <hr class="my-2 border-[#2a2a2a]">
+          <a href="/categories" class="block px-2 py-1 text-xs hover:bg-[#2a2a2a] rounded">Categories</a>
+          <a href="/tags" class="block px-2 py-1 text-xs hover:bg-[#2a2a2a] rounded">Tags</a>
+        </div>
       </div>
-    </div>
 
-    <!-- Directory Grid -->
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {{ range .Directories }}
-        <a href="/directory/{{ .Slug }}" class="block border border-gray-200 rounded-2xl shadow hover:shadow-md transition p-5">
-          <div class="flex items-center gap-3 mb-3">
-            {{ if .LogoURL }}
-              <img src="{{ .LogoURL }}" alt="{{ .Name }} Logo" class="w-10 h-10 rounded-xl object-cover" />
-            {{ else }}
-              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-xs text-gray-400">No Logo</div>
-            {{ end }}
-            <div class="flex-1">
-              <h2 class="text-lg font-semibold">{{ .Name }}</h2>
-              {{ if .IsFeatured }}<span class="text-yellow-500 text-xs">⭐ Featured</span>{{ end }}
-            </div>
-          </div>
-          <p class="text-sm text-gray-600 line-clamp-3">{{ .Description }}</p>
-          <div class="mt-2 text-xs text-gray-500">
-            Category: {{ .Category.Name }}
-          </div>
-          <div class="mt-1 flex flex-wrap gap-1 text-xs">
-            {{ range .Tags }}
-              <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">{{ .Name }}</span>
-            {{ end }}
-          </div>
-        </a>
-        {{ end }}
-      </div>
-      
+      <a href="/alternatives" class="hover:text-white">Alternatives</a>
+      <a href="/self-hosted" class="hover:text-white">Self-hosted</a>
+      <a href="/advertise" class="hover:text-white">Advertise</a>
 
-    <!-- No Results -->
-    {{ if not .Directories }}
-      <p class="text-gray-500 mt-10 text-center">No directories found. Try another filter.</p>
-    {{ end }}
+      <a href="/submit"
+         class="px-3 py-1 bg-white text-black rounded-md text-xs font-medium hover:bg-gray-200 transition">
+        Submit
+      </a>
+
+      <a href="/login"
+         class="border border-[#2a2a2a] px-3 py-1 rounded-md hover:text-white text-xs">
+        Sign In
+      </a>
+    </nav>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="md:hidden text-gray-400" @click="menuOpen = !menuOpen">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path x-show="!menuOpen" d="M4 6h16M4 12h16M4 18h16" />
+        <path x-show="menuOpen" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
   </div>
 
+  <!-- Mobile Nav -->
+  <div x-show="menuOpen" x-transition
+       class="md:hidden bg-[#0f0f0f] border-t border-[#2a2a2a] px-4 py-4 space-y-2 text-sm text-gray-300">
+    <a href="/latest" class="block hover:text-white">Latest</a>
+    <a href="/self-hosted" class="block hover:text-white">Self-hosted</a>
+    <a href="/coming-soon" class="block hover:text-white">Coming Soon</a>
+    <a href="/categories" class="block hover:text-white">Categories</a>
+    <a href="/tags" class="block hover:text-white">Tags</a>
+    <hr class="border-[#2a2a2a]">
+    <a href="/submit" class="block text-white font-semibold text-xs">Submit</a>
+    <a href="/login" class="block hover:text-white text-xs">Sign In</a>
+  </div>
+</header>
+
+
+  
+    <!-- Hero Section -->
+    <section class="text-center py-16 px-4 bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a]">
+      <h2 class="text-4xl font-bold mb-4">Discover the Best Startup & SaaS Directories</h2>
+      <p class="text-gray-400 text-lg mb-6">Curated collection of directories to help founders launch, grow, and get featured.</p>
+      <form class="max-w-md mx-auto flex justify-center">
+        <input type="email" placeholder="Enter your email" class="px-4 py-2 w-full rounded-l-xl text-black focus:outline-none" />
+        <button type="submit" class="bg-[#ff5c35] px-4 py-2 rounded-r-xl text-sm font-semibold hover:bg-orange-600 transition">Join</button>
+      </form>
+    </section>
+  
+    
+<div x-data="{ filtersOpen: true }" class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- Top Controls -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <input type="text" name="q" value="{{ .SearchQuery }}" placeholder="Search directories..."
+             class="w-full md:w-1/2 px-4 py-2 bg-[#1a1a1a] text-sm border border-[#2a2a2a] rounded-md placeholder-gray-500" />
+  
+      <div class="flex items-center gap-2 text-sm">
+        <button @click="filtersOpen = !filtersOpen"
+                class="flex items-center gap-2 px-3 py-1.5 border border-[#2a2a2a] rounded-md hover:bg-[#1a1a1a]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5"
+               viewBox="0 0 24 24"><path d="M3 4h18M6 8h12M9 12h6M12 16h0" /></svg>
+          Filters
+        </button>
+  
+        <select class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md px-3 py-1.5 text-sm">
+          <option>Order by</option>
+          <option value="recent">Most Recent</option>
+          <option value="popular">Most Popular</option>
+        </select>
+      </div>
+    </div>
+  
+    <!-- Filters Panel -->
+    <div x-show="filtersOpen" x-transition class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Filter Group: Alternatives -->
+      <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-3 text-sm">
+        <h3 class="text-xs text-gray-400 mb-2 font-medium">Search alternative</h3>
+        <div class="space-y-1 max-h-64 overflow-auto pr-2">
+          {{ range .Alternatives }}
+          <label class="flex items-center gap-2 text-xs">
+            <input type="checkbox" name="alternative" value="{{ .ID }}">
+            {{ .Name }}
+          </label>
+          {{ end }}
+        </div>
+      </div>
+  
+      <!-- Filter Group: Categories -->
+      <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-3 text-sm">
+        <h3 class="text-xs text-gray-400 mb-2 font-medium">Search category</h3>
+        <div class="space-y-1 max-h-64 overflow-auto pr-2">
+          {{ range .Categories }}
+          <label class="flex items-center gap-2 text-xs">
+            <input type="checkbox" name="category" value="{{ .ID }}">
+            {{ .Name }}
+          </label>
+          {{ end }}
+        </div>
+      </div>
+  
+      <!-- Filter Group: Tags (Stacks) -->
+      <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-3 text-sm">
+        <h3 class="text-xs text-gray-400 mb-2 font-medium">Search stack</h3>
+        <div class="space-y-1 max-h-64 overflow-auto pr-2">
+          {{ range .Tags }}
+          <label class="flex items-center gap-2 text-xs">
+            <input type="checkbox" name="tag" value="{{ .Name }}">
+            {{ .Name }}
+          </label>
+          {{ end }}
+        </div>
+      </div>
+  
+      <!-- Filter Group: Blog / Newsletter -->
+      <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-3 text-sm">
+        <h3 class="text-xs text-gray-400 mb-2 font-medium">Extras</h3>
+        <label class="flex items-center gap-2 text-xs mb-2">
+          <input type="checkbox" name="has_newsletter" {{ if .HasNewsletter }}checked{{ end }}>
+          Has Newsletter
+        </label>
+        <label class="flex items-center gap-2 text-xs">
+          <input type="checkbox" name="has_blog" {{ if .HasBlog }}checked{{ end }}>
+          Has Blog
+        </label>
+      </div>
+    </div>
+  
+    <!-- Directory Listings -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {{ range .Directories }}
+      <a href="/directory/{{ .Slug }}"
+         class="block bg-[#1a1a1a] border border-[#2a2a2a] rounded-md p-4 hover:border-white transition">
+        <div class="flex items-center gap-3 mb-2">
+          {{ if .LogoURL }}
+            <img src="{{ .LogoURL }}" alt="{{ .Name }} logo" class="w-8 h-8 rounded-md object-cover" />
+          {{ else }}
+            <div class="w-8 h-8 bg-gray-700 rounded-md flex items-center justify-center text-[10px] text-gray-400">No Logo</div>
+          {{ end }}
+          <div>
+            <h3 class="text-sm font-semibold">{{ .Name }}</h3>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 line-clamp-3">{{ .Description }}</p>
+        <div class="mt-3 space-y-1 text-[10px] text-gray-500">
+          <div>Category: {{ .Category.Name }}</div>
+          <div class="flex flex-wrap gap-1">
+            {{ range .Tags }}
+              <span class="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-[10px]">{{ .Name }}</span>
+            {{ end }}
+          </div>
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  
+    {{ if not .Directories }}
+      <p class="text-center text-gray-500 mt-8 text-sm">No directories match your filters.</p>
+    {{ end }}
+  
+  </div>
+  
+  <footer class="mt-16 border-t border-[#2a2a2a] bg-[#0f0f0f] text-sm text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-8">
+  
+      <!-- Newsletter -->
+      <div class="space-y-4">
+        <h3 class="text-white font-medium">Subscribe to our newsletter</h3>
+        <p class="text-xs leading-relaxed">Join 7,500+ other members and get updates on new startup and SaaS directories.</p>
+        <form class="flex">
+          <input type="email" placeholder="Enter your email"
+                 class="px-3 py-2 text-xs w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-l-md text-white placeholder-gray-500 focus:outline-none">
+          <button type="submit" class="bg-white text-black text-xs px-4 py-2 rounded-r-md">Subscribe</button>
+        </form>
+  
+        <!-- Icons -->
+        <div class="flex space-x-3 pt-2 text-gray-500">
+          <a href="#" class="hover:text-white">RSS</a>
+          <a href="#" class="hover:text-white">@</a>
+          <a href="#" class="hover:text-white">GitHub</a>
+          <a href="#" class="hover:text-white">X</a>
+          <a href="#" class="hover:text-white">Masto</a>
+          <a href="#" class="hover:text-white">LinkedIn</a>
+        </div>
+      </div>
+  
+      <!-- Browse Links -->
+      <div>
+        <h4 class="text-white font-medium mb-2">Browse:</h4>
+        <ul class="space-y-1 text-xs">
+          <li><a href="/alternatives" class="hover:text-white">Alternatives</a></li>
+          <li><a href="/categories" class="hover:text-white">Categories</a></li>
+          <li><a href="/self-hosted" class="hover:text-white">Self-hosted</a></li>
+          <li><a href="/tags" class="hover:text-white">Tech Stacks</a></li>
+          <li><a href="/topics" class="hover:text-white">Topics</a></li>
+          <li><a href="/licenses" class="hover:text-white">Licenses</a></li>
+        </ul>
+      </div>
+  
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-white font-medium mb-2">Quick Links:</h4>
+        <ul class="space-y-1 text-xs">
+          <li><a href="/about" class="hover:text-white">About Us</a></li>
+          <li><a href="/blog" class="hover:text-white">Blog</a></li>
+          <li><a href="/advertise" class="hover:text-white">Advertise</a></li>
+          <li><a href="/submit" class="hover:text-white">Add a Free Listing</a></li>
+        </ul>
+      </div>
+  
+      <!-- Other Products -->
+      <div>
+        <h4 class="text-white font-medium mb-2">Other Products:</h4>
+        <ul class="space-y-1 text-xs">
+          <li><a href="https://productivity.directory" class="hover:text-white">Productivity Directory</a></li>
+          <li><a href="https://altern.ai" class="hover:text-white">Altern</a></li>
+        </ul>
+      </div>
+    </div>
+  
+    <!-- Bottom Attribution -->
+    <div class="max-w-7xl mx-auto px-4 pb-8 pt-4 text-xs flex flex-col md:flex-row justify-between items-start md:items-center border-t border-[#2a2a2a]">
+      <div class="mb-3 md:mb-0">
+        Built with <a href="https://github.com/dariubs/directory.surf" class="text-white font-medium">Directory Surf</a>
+      </div>
+      <div>
+        Made by <span class="text-white font-medium">Dariush Abbasi</span>. 
+      </div>
+    </div>
+  
+   
+  </footer>
+  
 </body>
+
+  
 </html>
