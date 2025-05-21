@@ -17,6 +17,7 @@ func main() {
 	services.InitStripe()
 	services.InitR2()
 	services.InitEmail()
+	services.InitOAuth()
 
 	if os.Getenv("SEED") == "true" {
 		seed.Run()
